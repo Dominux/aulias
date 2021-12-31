@@ -13,3 +13,7 @@ shellexpand = "2.1.0"
 [[bin]]
 name = "aulias"
 path = "src/bin/aulias.rs"
+
+[[bin]]
+name = "unaulias"
+path = "src/bin/unaulias.rs"

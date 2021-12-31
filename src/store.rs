@@ -8,7 +8,7 @@ use itertools::Itertools;
 use regex::Regex;
 use shellexpand;
 
-const FILENAME: &str = "~/.auliases";
+pub const FILENAME: &str = "~/.auliases";
 
 pub struct Store;
 
@@ -29,11 +29,17 @@ impl Store {
 
     /// List all aliases
     pub fn list() -> io::Result<HashMap<String, String>> {
-        let file = Self::open_file(true, false)?;
         let re_alias = Regex::new(r"alias ").expect("Wrong regex");
         let re_equal_sign = Regex::new(r"=").expect("Wrong regex");
 
         let mut list = HashMap::new();
+
+		// Getting the file to read, if file not found => return empty aliases list
+        let file = match Self::open_file(true, false) {
+            Ok(file) => file,
+            Err(ref e) if e.kind() == io::ErrorKind::NotFound => return Ok(list),
+            Err(e) => return Err(e),
+        };
 
         // TODO: add adequate parsing/validating
         BufReader::new(&file).lines().for_each(|line| {
